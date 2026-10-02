@@ -53,8 +53,7 @@ def inicializar_banco():
             )''')
             
         conexao.commit()
-        
-        # Cadastro automático dos 10 exercícios de máquina
+
         exercicios_maquina = [
             ("Leg Press 45º",), ("Extensora",), ("Flexora Horizontal",),
             ("Puxada Alta na Polia",), ("Remada Baixa na Máquina",), ("Supino Sentado na Máquina",),
@@ -69,9 +68,6 @@ def inicializar_banco():
     finally:
         if conexao:
             conexao.close()
-
-
-# --- 2. GERENCIAMENTO DE PERSONAL ---
 
 def cadastrar_personal():
     try:
@@ -124,8 +120,6 @@ def listar_personais():
             conexao.close()
 
 
-# --- 3. GERENCIAMENTO DE ALUNOS (COM REGRAS DE IDADE E AGENDAMENTO) ---
-
 def cadastrar_aluno():
     try:
         conexao = sqlite3.connect('sistema_academia.db')
@@ -135,41 +129,38 @@ def cadastrar_aluno():
         nome = input("Nome do aluno: ")
         idade = int(input("Idade do aluno: "))
         
-        # --- REGRAS DE IDADE ---
         if idade < 12:
-            print("⚠️ Menor de 12 anos só pode treinar se for acompanhado DIRETAMENTE por um Personal.")
+            print(" Menor de 12 anos só pode treinar se for acompanhado DIRETAMENTE por um Personal.")
             status_acompanhamento = "Apenas acompanhado por Personal"
         elif idade < 18:
             permissao = input("Possui permissão assinada pelos pais? (S/N): ").strip().upper()
             if permissao == "S":
-                print("✅ Permissão confirmada. Pode treinar sozinho.")
+                print(" Permissão confirmada. Pode treinar sozinho.")
                 status_acompanhamento = "Menor com permissão dos pais"
             else:
-                print("❌ Cadastro Negado: Menores de 18 anos precisam de permissão dos pais para treinar sozinhos.")
+                print(" Cadastro Negado: Menores de 18 anos precisam de permissão dos pais para treinar sozinhos.")
                 return
         else:
-            print("✅ Maior de idade. Treino desacompanhado liberado.")
+            print(" Maior de idade. Treino desacompanhado liberado.")
             status_acompanhamento = "Liberado (Maior de idade)"
 
         cpf = input("CPF: ")
         mensalidade = float(input("Valor da mensalidade: "))
         
-        # Agendamento de Aula fixa
         print("\n--- AGENDAMENTO DA AULA FIXA ---")
         dia_aula = input("Dia da semana para a aula (ex: Segunda-feira): ")
         horario_aula = input("Horário da aula (ex: 14:00): ")
 
-        # Escolha do Personal responsável
         personais = listar_personais()
         if not personais:
-            print("❌ Erro: Cadastre pelo menos um Personal no sistema antes de cadastrar alunos.")
+            print(" Erro: Cadastre pelo menos um Personal no sistema antes de cadastrar alunos.")
             return
             
         id_personal = int(input("\nDigite o ID do Personal selecionado para o aluno: "))
         
         cursor.execute("SELECT id FROM personal WHERE id = ?", (id_personal,))
         if not cursor.fetchone():
-            print("❌ Erro: ID de Personal inválido.")
+            print(" Erro: ID de Personal inválido.")
             return
 
         cursor.execute('''
@@ -188,9 +179,6 @@ def cadastrar_aluno():
         if conexao:
             conexao.close()
 
-
-# --- 4. MONTAGEM DE TREINOS (EXCLUSIVA PELO PERSONAL) ---
-
 def vincular_treino_aluno():
     try:
         conexao = sqlite3.connect('sistema_academia.db')
@@ -203,7 +191,7 @@ def vincular_treino_aluno():
         personal_valido = cursor.fetchone()
         
         if not personal_valido:
-            print("❌ Acesso Negado: Apenas um Personal cadastrado pode prescrever treinos.")
+            print(" Acesso Negado: Apenas um Personal cadastrado pode prescrever treinos.")
             return
             
         print(f"✓ Identidade Confirmada: Professor(a) {personal_valido[0]}")
@@ -213,13 +201,12 @@ def vincular_treino_aluno():
         cursor.execute("SELECT nome_aluno, status_acompanhamento FROM alunos WHERE id = ?", (id_aluno,))
         aluno_dados = cursor.fetchone()
         if not aluno_dados:
-            print("❌ Erro: Aluno não encontrado.")
+            print(" Erro: Aluno não encontrado.")
             return
             
         print(f"Montando treino para: {aluno_dados[0]} ({aluno_dados[1]})")
         dia_semana = input("Qual o dia da semana deste treino? (ex: Segunda): ").strip()
-        
-        # Listar as 10 máquinas cadastradas
+
         cursor.execute("SELECT * FROM exercicios")
         maquinas = cursor.fetchall()
         print("\n--- MÁQUINAS DISPONÍVEIS ---")
@@ -245,7 +232,7 @@ def vincular_treino_aluno():
                 VALUES (?, ?, ?)''', (id_aluno, dia_semana, id_ex))
                 
         conexao.commit()
-        print(f"💪 Treino de {dia_semana} salvou com sucesso para o aluno pelo Personal!")
+        print(f" Treino de {dia_semana} salvou com sucesso para o aluno pelo Personal!")
         
     except ValueError:
         print("Erro: Digite apenas números válidos para os IDs.")
@@ -254,9 +241,6 @@ def vincular_treino_aluno():
     finally:
         if conexao:
             conexao.close()
-
-
-# --- 5. EXIBIÇÃO DE RELATÓRIO COMPLETO ---
 
 def visualizar_ficha_aluno():
     try:
@@ -313,8 +297,6 @@ def visualizar_ficha_aluno():
     finally:
         if conexao:
             conexao.close()
-
-# --- 6. MENU INTERATIVO DO SISTEMA ---
 
 def menu():
     try:
