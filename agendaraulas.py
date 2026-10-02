@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS aulas (
 cursor.execute('''CREATE TABLE IF NOT EXISTS agendamentos(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     aula_id INTEGER NOT NULL,
-    aluno TEXT NOLL,
+    aluno TEXT NULL,
     FOREIGN KEY (aula_id) REFERENCES aulas(id)
 )''')
 
@@ -59,7 +59,8 @@ def listar_aulas():
             "| Aula:", aula[1],
             "| Professor:", aula[2],
             "| Data:", aula[3],
-            "| Vagas:", aula[4]
+            "| Hora:", aula[4],
+            "| Vagas:", aula[5]
         )
 
 def agendar_aula():
@@ -159,7 +160,7 @@ while True:
             listar_alunos()
             
         case "5":
-            print("Opção inválida")
+            print("Saindo do sistema")
             break
 
         case _:
@@ -168,9 +169,5 @@ while True:
 conexao.commit()
 conexao.close()
 
-criar_aula()
-agendar_aula()
-listar_aulas()
-listar_alunos()
 
 
