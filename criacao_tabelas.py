@@ -5,7 +5,7 @@ conexao = None
 
 
 try:
-    def criar_tabel():
+    def criar_tabela():
 
         cursor.execute("PRAGMA foreign_keys = ON;")
 
