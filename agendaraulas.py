@@ -2,26 +2,6 @@ import sqlite3
 
 conexao = sqlite3.connect('sistema_academia.db')
 cursor = conexao.cursor()
-#TABELA PARA AULAS
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS aulas (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome TEXT NOT NULL,
-    professor TEXT NOT NULL,
-    data TEXT NOT NULL,
-    hora TEXT NOT NULL,
-    vagas INTEGER NOT NULL
-)
-""")
-#TABELA PARA OS AGENDAMENTOS 
-cursor.execute('''CREATE TABLE IF NOT EXISTS agendamentos(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    aula_id INTEGER NOT NULL,
-    aluno TEXT NULL,
-    FOREIGN KEY (aula_id) REFERENCES aulas(id)
-)''')
-
-conexao.commit()
 
 
 def criar_aula():

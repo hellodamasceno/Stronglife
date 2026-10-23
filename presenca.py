@@ -3,16 +3,6 @@ import sqlite3
 conexao = sqlite3.connect('sistema_academia.db')
 cursor = conexao.cursor()
 
-cursor.execute('''
-    CREATE TABLE IF NOT EXISTS presencas (
-        id_presenca INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_aluno INTEGER NOT NULL,
-        data_hora TEXT NOT NULL,
-        FOREIGN KEY (id_aluno) REFERENCES aluno(id_aluno)
-    )
-''')
-
-conexao.commit()
 
 
 def registrar_presenca_aluno():
