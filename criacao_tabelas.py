@@ -33,11 +33,24 @@ try:
         )
         ''')
 
+        cursor.execute('''
+        CREATE TABLE IF NOT EXISTS recepcionistas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            cpf TEXT NOT NULL UNIQUE,
+            senha TEXT NOT NULL,
+            id_aluno INTEGER NOT NULL,
+            FOREIGN KEY (id_aluno) REFERENCES alunos(id)
+        )
+        ''')
+
 
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS gerentes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
+            senha TEXT NOT NULL,
+            cpf TEXT NOT NULL,
             plano_aluno TEXT NOT NULL,
             FOREIGN KEY (plano_aluno) REFERENCES alunos(plano)
         )

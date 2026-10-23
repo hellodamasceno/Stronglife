@@ -31,7 +31,7 @@ def inicializar_banco():
                 dia_aula TEXT NOT NULL,
                 horario_aula TEXT NOT NULL,
                 status_acompanhamento TEXT NOT NULL,
-                FOREIGN KEY (id_personal) REFERENCES personal(id)
+                FOREIGN KEY (id_personal) REFERENCES personal(id) ja tem tabela
             )''')
             
         # Tabela de Exercícios de Máquina
@@ -49,7 +49,7 @@ def inicializar_banco():
                 dia_semana TEXT NOT NULL,
                 id_exercicio INTEGER NOT NULL,
                 FOREIGN KEY (id_aluno) REFERENCES alunos(id),
-                FOREIGN KEY (id_exercicio) REFERENCES exercicios(id)
+                FOREIGN KEY (id_exercicio) REFERENCES exercicios(id) JA tem tabela
             )''')
             
         conexao.commit()
