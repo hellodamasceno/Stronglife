@@ -60,7 +60,7 @@ def inicializar_banco():
             ("Desenvolvimento de Ombros Máquina",), ("Tríceps Corda Polia",),
             ("Rosca Biceps na Polia",), ("Cadeira Abdutora/Adutora",)
         ]
-        cursor.executemany("INSERT OR IGNORE INTO exercicios (nome) VALUES (?)", exercicios_maquina)
+        cursor.executemany("INSERT OR IGNORE INTO exercicios (nome) VALUES (?)", exercicios_maquina) # Verificar isso
         conexao.commit()
         
     except sqlite3.Error as erro:
@@ -169,7 +169,7 @@ def cadastrar_aluno():
             (nome, idade, cpf, mensalidade, id_personal, dia_aula, horario_aula, status_acompanhamento))
             
         conexao.commit()
-        print(f"🎉 Aluno {nome} cadastrado com sucesso! Aula agendada para {dia_aula} às {horario_aula}.")
+        print(f" Aluno {nome} cadastrado com sucesso! Aula agendada para {dia_aula} às {horario_aula}.")
         
     except ValueError:
         print("Erro: Dados numéricos inválidos digitados.")
@@ -194,7 +194,7 @@ def vincular_treino_aluno():
             print(" Acesso Negado: Apenas um Personal cadastrado pode prescrever treinos.")
             return
             
-        print(f"✓ Identidade Confirmada: Professor(a) {personal_valido[0]}")
+        print(f" Identidade Confirmada: Professor(a) {personal_valido[0]}")
         
         id_aluno = int(input("Digite o ID do Aluno que receberá o treino: "))
         
@@ -310,7 +310,7 @@ def menu():
             print("5. Ver Ficha e Agendamento do Aluno")
             print("0. Sair")
             
-            opcao = input("Selecione uma opção: ").strip()
+            opcao = input("Selecione uma opção: ").strip() # .strip? ver isso
             
             if opcao == "1":
                 cadastrar_personal()

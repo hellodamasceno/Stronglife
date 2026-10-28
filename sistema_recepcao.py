@@ -160,13 +160,106 @@ def cadastrar_personais():
     except sqlite3.IntegrityError as e:
         print("Erro! Informações já cadastradas! ", e)
 
+def listar_personais():
 
-def atualizar_
+    print(">>> PERSONAIS CADASTRADOS <<<")
+    print("1 - Listar todos os personais")
+    print("2 - Buscar personal pelo id")
+
+    opcao = int(input("Informe a opção desejada: "))
+
+    mach opcao:
+        case 1:
+            cursor.execute("SELECT * FROM personais")
+            inf_personais = cursor.fetchall()
+
+            if inf_personais:
+                for personal in inf_personais:
+                    print(personal)
+            else:
+                print("Nenhum personal encontrado!")
+
+        case 2: 
+            cursor.execute("SELECT * FROM personais WHERE id = ?", (id_personal,))
+            info_personais = cursor.fetchone()
+
+            if info_personais:
+                print(">>> PERSONAL ENCONTRADO <<<")
+                print(info_personais)
+            else:
+                print("Nenhum personal encontrado com esse id!")
+        case _:
+            print("Opção inválida!")
 
 
+def atualizar_cadastro():
+    listar_personais()
+
+    id_personal = input("Digite o ID do personal que deseja atualizar: ")
+
+    cursor.execute("SELECT * FROM personais WHERE id = ?", (id_personal,))
+    personal = cursor.fetchone()
+
+    if not personal:
+        print("Personal não encontrado!")
+        return
+
+    while True:
+        print("\n>>> ATUALIZAR CADASTRO <<<")
+        print("1 - Nome")
+        print("2 - CPF")
+        print("3 - Telefone")
+
+        opcao = input("Escolha o que deseja atualizar: ")
+
+        match opcao:
+            case "1":
+                novo_valor = input("Digite o novo nome: ")
+                cursor.execute(
+                    "UPDATE personais SET nome = ? WHERE id = ?",
+                    (novo_valor, id_personal)
+                )
+
+            case "2":
+                novo_valor = input("Digite o novo CPF: ")
+                cursor.execute(
+                    "UPDATE personais SET cpf = ? WHERE id = ?",
+                    (novo_valor, id_personal)
+                )
+
+            case "3":
+                novo_valor = input("Digite o novo telefone: ")
+                cursor.execute(
+                    "UPDATE personais SET telefone = ? WHERE id = ?",
+                    (novo_valor, id_personal)
+                )
+
+            case "4":
+                print("Voltando ao menu...")
+                break
+
+            case _:
+                print("Opção inválida!")
+                continue
+
+        if opcao in ["1", "2", "3", "4"]:
+            conexao.commit()
+            print("Cadastro atualizado com sucesso!")
+ 
+def excluir_cadastro():
+    listar_personais()
 
 
-    
+    try:
+        id_personal = int(input("Informe o id do cadastro que deseja excluir: "))
+        cursor.execute("DELETE FROM personais WHERE id = ?", (id_personal,))
+
+
+        conexao.commit()
+        print("Cadastro deletado com sucesso!")
+
+    except sqlite3.Error as e:
+            print("Erro: Cadastro não deletado.", e)
 
 
 
