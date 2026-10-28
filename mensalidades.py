@@ -18,19 +18,20 @@ def mensalidades():
 
     opcao = int(input("Escolha seu plano: "))
 
-    if opcao == 1:
-        print("Plano Mensal - R$ 100,00 por mês")
+    match opcao:
+        case 1:
+            print("Plano Mensal - R$ 100,00 por mês")
 
-    elif opcao == 2:
-        print("Plano Trimestral - R$ 90,00 por mês")
+        case 2:
+            print("Plano Trimestral - R$ 90,00 por mês")
 
-    elif opcao == 3:
-        print("Plano Semestral - R$ 80,00 por mês")
+        case 3:
+            print("Plano Semestral - R$ 80,00 por mês")
+        
+        case 4:
+            print("Plano Anual - R$ 70,00 por mês")
 
-    elif opcao == 4:
-        print("Plano Anual - R$ 70,00 por mês")
-
-    else:
-        print("Opção inválida!")
+        case _:
+            print("Opção inválida!")
 
 mensalidades()
