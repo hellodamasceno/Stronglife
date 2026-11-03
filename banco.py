@@ -13,13 +13,16 @@ try:
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS alunos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            cpf TEXT NOT NULL UNIQUE,
-            telefone TEXT NOT NULL,
+            nome_aluno TEXT NOT NULL,
             idade INTEGER NOT NULL,
-            plano TEXT NOT NULL
-        )
-        ''')
+            cpf TEXT NOT NULL UNIQUE,
+            mensalidade REAL NOT NULL,
+            id_personal INTEGER NOT NULL,
+            dia_aula TEXT NOT NULL,
+            horario_aula TEXT NOT NULL,
+            status_acompanhamento TEXT NOT NULL,
+            FOREIGN KEY (id_personal) REFERENCES personal(id) ja tem tabela
+        )''')
 
 
         cursor.execute('''
@@ -115,6 +118,21 @@ try:
         )
         ''')
 
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS exercicios (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nome TEXT NOT NULL UNIQUE
+            )''')
+            
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS treinos_diarios (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id_aluno INTEGER NOT NULL,
+                dia_semana TEXT NOT NULL,
+                id_exercicio INTEGER NOT NULL,
+                FOREIGN KEY (id_aluno) REFERENCES alunos(id),
+                FOREIGN KEY (id_exercicio) REFERENCES exercicios(id) JA tem tabela
+            )''')
 
         print("Tabelas criadas com sucesso!")
 
