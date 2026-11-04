@@ -259,12 +259,4 @@ def excluir_cadastro():
         print("Cadastro deletado com sucesso!")
 
     except sqlite3.Error as e:
-            print("Erro: Cadastro não deletado.", e)
-
-
-
-    
-
-
-
-  
+            print(f"Erro: Cadastro não deletado. {e}")
