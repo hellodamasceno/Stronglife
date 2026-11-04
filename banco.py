@@ -21,7 +21,12 @@ def criar_tabela():
         dia_aula TEXT NOT NULL,
         horario_aula TEXT NOT NULL,
         status_acompanhamento TEXT NOT NULL,
+<<<<<<< HEAD
         FOREIGN KEY (id_personal) REFERENCES personal(id) 
+=======
+        plano TEXT NOT NULL,
+        FOREIGN KEY (id_personal) REFERENCES personais(id) 
+>>>>>>> 9ac47d45355ceb9b3597457c8ed8174765170b13
     )''')
 
 
@@ -30,9 +35,7 @@ def criar_tabela():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
         cpf TEXT NOT NULL UNIQUE,
-        telefone TEXT NOT NULL,
-        id_aluno INTEGER NOT NULL,
-        FOREIGN KEY (id_aluno) REFERENCES alunos(id)
+        telefone TEXT NOT NULL
     )
     ''')
 
@@ -53,9 +56,9 @@ def criar_tabela():
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         nome TEXT NOT NULL,
         senha TEXT NOT NULL,
-        cpf TEXT NOT NULL,
-        plano_aluno TEXT NOT NULL,
-        FOREIGN KEY (plano_aluno) REFERENCES alunos(plano)
+        cpf TEXT NOT NULL UNIQUE,
+        id_aluno INTEGER NOT NULL,
+        FOREIGN KEY (id_aluno) REFERENCES alunos(id)
     )
     ''')
 
@@ -110,10 +113,8 @@ def criar_tabela():
         status TEXT,
         dias_atraso INTEGER,
         id_aluno INTEGER NOT NULL,
-        id_personal INTEGER NOT NULL,
         plano_aluno TEXT NOT NULL,
         FOREIGN KEY (id_aluno) REFERENCES alunos(id),
-        FOREIGN KEY (id_personal) REFERENCES personais(id),
         FOREIGN KEY (plano_aluno) REFERENCES alunos(plano)
     )
     ''')
@@ -134,4 +135,5 @@ def criar_tabela():
             FOREIGN KEY (id_exercicio) REFERENCES exercicios(id) JA tem tabela
         )''')
 
+    conexao.commit()
     print("Tabelas criadas com sucesso!")
