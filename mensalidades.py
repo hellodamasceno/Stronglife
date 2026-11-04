@@ -1,4 +1,5 @@
-from sistema_recepcao import cadastrar_aluno
+from sistema_recepcao import cadastrar_alunos
+
 def mensalidades():
     planos = {
         1: ("Mensal", 1, 100.00),
@@ -45,5 +46,5 @@ def mensalidades():
         print("Contrato cancelado!")
         return
 
-    cadastrar_aluno(valor_total)
+    cadastrar_alunos()
 mensalidades()

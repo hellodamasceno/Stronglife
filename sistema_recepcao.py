@@ -1,3 +1,6 @@
+import sqlite3
+conexao = sqlite3.connect('sistema_academia.db')
+cursor = conexao.cursor()
 print("---LOGIN RECEPCIONISTA---")
 
 def login_rec():
@@ -6,13 +9,14 @@ def login_rec():
 
 
 def cadastrar_alunos():
-    nome_aluno = input("Informe o nome do aluno para o cadastro: ")
-    cpf_aluno = input("Informe o cpf do aluno para o cadastro: ")
-    tel_aluno = input("Informe o telefone do aluno: ")
-    idade_aluno = int(input("Informe a idade do aluno: "))
-    plano_aluno = input("Informe o plano que o aluno será vinculado: ")
+    try:
+        nome_aluno = input("Informe o nome do aluno para o cadastro: ")
+        cpf_aluno = input("Informe o cpf do aluno para o cadastro: ")
+        tel_aluno = input("Informe o telefone do aluno: ")
+        idade_aluno = int(input("Informe a idade do aluno: "))
+        plano_aluno = input("Informe o plano que o aluno será vinculado: ")
 
-    comando_inserir = "INSERT INTO alunos (nome, cpf, telefone, idade, plano) VALUES (?, ?, ?, ?, ?)"
+        comando_inserir = "INSERT INTO alunos (nome, cpf, telefone, idade, plano) VALUES (?, ?, ?, ?, ?)"
 
         cursor.execute(comando_inserir, (nome_aluno, cpf_aluno, tel_aluno, idade_aluno, plano_aluno))
         conexao.commit()
@@ -30,7 +34,7 @@ def listar_alunos():
 
     opcao = int(input("Informe a opção desejada: "))
 
-    mach opcao:
+    match opcao:
         case 1:
             cursor.execute("SELECT * FROM alunos")
             inf_alunos = cursor.fetchall()
@@ -57,9 +61,8 @@ def listar_alunos():
 def atualizar_cadastro():
     listar_alunos()
 
-    try:
-        def atualizar_cadastro():
-    listar_alunos()
+    def atualizar_cadastro():
+        listar_alunos()
 
     id_aluno = input("Digite o ID do aluno que deseja atualizar: ")
 
@@ -136,7 +139,7 @@ def excluir_cadastro():
 
     try:
         id_rede = int(input("Informe o id do cadastro que deseja excluir: "))
-        cursor.execute("DELETE FROM alunos WHERE id = ?", (id_aluno,))
+        cursor.execute("DELETE FROM alunos WHERE id = ?", (id_rede,))
 
 
         conexao.commit()
@@ -147,11 +150,12 @@ def excluir_cadastro():
 
 
 def cadastrar_personais():
-    nome_personal = input("Informe o nome do porfessor para o cadastro: ")
-    cpf_personal = input("Informe o cpf do professor para o cadastro: ")
-    tel_personal = input("Informe o telefone do professor: ")
+    try:
+        nome_personal = input("Informe o nome do porfessor para o cadastro: ")
+        cpf_personal = input("Informe o cpf do professor para o cadastro: ")
+        tel_personal = input("Informe o telefone do professor: ")
 
-    comando_inserir = "INSERT INTO personais (nome, cpf, telefone) VALUES (?, ?, ?)"
+        comando_inserir = "INSERT INTO personais (nome, cpf, telefone) VALUES (?, ?, ?)"
 
         cursor.execute(comando_inserir, (nome_personal, cpf_personal, tel_personal))
         conexao.commit()
@@ -168,7 +172,7 @@ def listar_personais():
 
     opcao = int(input("Informe a opção desejada: "))
 
-    mach opcao:
+    match opcao:
         case 1:
             cursor.execute("SELECT * FROM personais")
             inf_personais = cursor.fetchall()
