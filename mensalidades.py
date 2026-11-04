@@ -1,37 +1,49 @@
-import sqlite3
-
-conexao = sqlite3.connect('sistema_academia.db')
-cursor = conexao.cursor()
-
+from sistema_recepcao import cadastrar_aluno
 def mensalidades():
-    planos = [
-        ("Mensal", 1, 100.00),
-        ("Trimestral", 3, 90.00),
-        ("Semestral", 6, 80.00),
-        ("Anual", 12, 70.00)
-    ]
+    planos = {
+        1: ("Mensal", 1, 100.00),
+        2: ("Trimestral", 3, 90.00),
+        3: ("Semestral", 6, 80.00),
+        4: ("Anual", 12, 70.00)
+    }
 
-    print("1 - Mensal")
-    print("2 - Trimestral")
-    print("3 - Semestral")
-    print("4 - Anual")
+    print("\n====== PLANOS STRONGLIFE ======\n")
 
-    opcao = int(input("Escolha seu plano: "))
+    for codigo, plano in planos.items():
 
-    match opcao:
-        case 1:
-            print("Plano Mensal - R$ 100,00 por mês")
+        nome, duracao, valor = plano
 
-        case 2:
-            print("Plano Trimestral - R$ 90,00 por mês")
+        print(codigo, "-", nome)
+        print("Duração:", duracao, "meses")
+        print("Valor mensal: R$", valor)
+        print("Valor total: R$", duracao * valor)
+        print()
 
-        case 3:
-            print("Plano Semestral - R$ 80,00 por mês")
-        
-        case 4:
-            print("Plano Anual - R$ 70,00 por mês")
+    try:
+        opcao = int(input("Escolha seu plano: "))
+    except ValueError:
+        print("Digite uma opção válida!")
+        return
 
-        case _:
-            print("Opção inválida!")
+    if opcao not in planos:
+        print("Opção inválida!")
+        return
 
+    nome_plano, duracao, valor_mensal = planos[opcao]
+
+    valor_total = duracao * valor_mensal
+
+    print("\n====== PLANO ESCOLHIDO ======")
+    print("Plano:", nome_plano)
+    print("Duração:", duracao, "meses")
+    print("Valor mensal: R$", valor_mensal)
+    print("Valor total: R$", valor_total)
+
+    confirmar = input("\nDeseja continuar? (S/N): ")
+
+    if confirmar != "S" and confirmar != "s":
+        print("Contrato cancelado!")
+        return
+
+    cadastrar_aluno(valor_total)
 mensalidades()

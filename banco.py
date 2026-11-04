@@ -135,10 +135,3 @@ def criar_tabela():
         )''')
 
     print("Tabelas criadas com sucesso!")
-
-
-
-conexao.close()
-
-
-
