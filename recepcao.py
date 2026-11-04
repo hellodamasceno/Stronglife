@@ -2,7 +2,7 @@ import sqlite3
 
 def criar_tabela():
     try:
-        conexao = sqlite3.connect('teste1.db')
+        conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
         cursor.execute("PRAGMA foreign_keys = ON;")
 
@@ -125,7 +125,7 @@ def criar_tabela():
 def cadastrar_aluno():
     
     try:
-        conexao = sqlite3.connect('sistem_academia.db')
+        conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
         cursor.execute("PRAGMA foreign_keys = ON;")
         
@@ -151,7 +151,7 @@ def cadastrar_aluno():
 
 def cadastrar_personal():
     try:
-        conexao = sqlite3.connect('sistem_academia.db')
+        conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
         cursor.execute("PRAGMA foreign_keys = ON;")
         
@@ -171,7 +171,7 @@ def cadastrar_personal():
 
 def listar_aluno():
     try:
-        conexao = sqlite3.connect('sistem_academia.db')
+        conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
         
         print("\n----LISTA DE ALUNOS----")
@@ -191,7 +191,7 @@ def listar_aluno():
 
 def listar_personal():
     try:
-        conexao = sqlite3.connect('sistem_academia.db')
+        conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
         
         print("\n---- LISTA DE PERSONAIS ----")
@@ -211,7 +211,7 @@ def listar_personal():
 
 def deletar_aluno():
     try:
-        conexao = sqlite3.connect('sistem_academia.db')
+        conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
         cursor.execute("PRAGMA foreign_keys = ON;")
         
@@ -237,7 +237,7 @@ def deletar_aluno():
 
 def deletar_personal():
     try:
-        conexao = sqlite3.connect('sistem_academia.db')
+        conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
         cursor.execute("PRAGMA foreign_keys = ON;")
         
@@ -265,7 +265,7 @@ def deletar_personal():
 
 def aula_experimental():
     try:
-        conexao = sqlite3.connect('sistem_academia.db')
+        conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
         
         print("\n---AULAS EXPERIMENTAIS---")
@@ -293,7 +293,8 @@ def aula_experimental():
         conexao.close()
 
 def menu():
-criar_tabela()
+    
+    criar_tabela()
     
     while True:
         print("\n ----- MENU RECEPCIONISTA ----- ")
