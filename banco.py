@@ -21,7 +21,7 @@ def criar_tabela():
         dia_aula TEXT NOT NULL,
         horario_aula TEXT NOT NULL,
         status_acompanhamento TEXT NOT NULL,
-        FOREIGN KEY (id_personal) REFERENCES personal(id) ja tem tabela
+        FOREIGN KEY (id_personal) REFERENCES personal(id) 
     )''')
 
 
