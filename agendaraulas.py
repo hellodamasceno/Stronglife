@@ -4,6 +4,7 @@ conexao = sqlite3.connect('sistema_academia.db')
 cursor = conexao.cursor()
 
 
+
 def criar_aula():
 
     nome = input("Digite o nome da aula: ")

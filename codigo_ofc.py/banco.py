@@ -106,18 +106,16 @@ def criar_tabela():
 
 
     cursor.execute('''
-    CREATE TABLE IF NOT EXISTS mensalidades (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        aluno TEXT,
-        valor REAL,
-        status TEXT,
-        dias_atraso INTEGER,
-        id_aluno INTEGER NOT NULL,
-        plano_aluno TEXT NOT NULL,
-        FOREIGN KEY (id_aluno) REFERENCES alunos(id),
-        FOREIGN KEY (plano_aluno) REFERENCES alunos(plano)
-    )
-    ''')
+CREATE TABLE IF NOT EXISTS mensalidades (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_aluno INTEGER NOT NULL,
+    plano TEXT NOT NULL,
+    valor REAL NOT NULL,
+    status TEXT NOT NULL,
+    dias_atraso INTEGER DEFAULT 0,
+    FOREIGN KEY (id_aluno) REFERENCES alunos(id)
+)
+''')
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS exercicios (

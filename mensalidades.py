@@ -1,4 +1,8 @@
-from sistema_recepcao import cadastrar_alunos
+import sqlite3
+conexao = sqlite3.connect('sistema_academia.db')
+cursor = conexao.cursor()
+
+
 
 def mensalidades():
     planos = {
