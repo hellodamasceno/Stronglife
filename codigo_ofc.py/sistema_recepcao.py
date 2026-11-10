@@ -1,4 +1,5 @@
 import sqlite3
+from mensalidades import mensalidade, cadastrar_mensalidade
 
 def criar_tabela():
     try:
@@ -136,13 +137,32 @@ def cadastrar_alunos():
         cpf_aluno = input("Informe o cpf do aluno para o cadastro: ")
         tel_aluno = input("Informe o telefone do aluno: ")
         idade_aluno = int(input("Informe a idade do aluno: "))
-        #criar select no banco buscando todos os planos e listar na tela 
         plano_aluno = input("Informe o plano que o aluno será vinculado: ")
+        resultado = mensalidades()
 
-        comando_inserir = "INSERT INTO alunos (nome, cpf, telefone, idade, plano) VALUES (?, ?, ?, ?, ?)"
+        if resultado is None:
+            return
 
-        cursor.execute(comando_inserir, (nome_aluno, cpf_aluno, tel_aluno, idade_aluno, plano_aluno))
-       conexao.commit()
+        plano_aluno, valor_aluno = resultado
+
+        comando_inserir = ('''
+INSERT INTO alunos (nome_aluno, cpf, idade, mensalidade, plano)
+VALUES (?, ?, ?, ?, ?)
+''')
+
+cursor.execute(comando_inserir, (
+    nome_aluno,
+    cpf_aluno,
+    idade_aluno,
+    valor_aluno,
+    plano_aluno
+))
+
+id_aluno = cursor.lastrowid
+
+cadastrar_mensalidade(id_aluno, plano_aluno, valor_aluno)
+
+conexao.commit()
         print(f"Aluno '{nome}' cadastrado com sucesso!")
     except ValueError:
         print("Erro: Idade e mensalidade devem ser apenas números!")

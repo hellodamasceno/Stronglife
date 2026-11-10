@@ -28,11 +28,11 @@ def mensalidades():
         opcao = int(input("Escolha seu plano: "))
     except ValueError:
         print("Digite uma opção válida!")
-        return
+        return None
 
     if opcao not in planos:
         print("Opção inválida!")
-        return
+        return None
 
     nome_plano, duracao, valor_mensal = planos[opcao]
 
@@ -48,7 +48,28 @@ def mensalidades():
 
     if confirmar != "S" and confirmar != "s":
         print("Contrato cancelado!")
-        return
+        return None
 
-    cadastrar_alunos()
-mensalidades()
+    return nome_plano, valor_mensal
+
+
+def cadastrar_mensalidade(id_aluno, plano, valor):
+
+    try:
+        conexao = sqlite3.connect('sistema_academia.db')
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+            INSERT INTO mensalidades
+            (id_aluno, plano, valor, status)
+            VALUES (?, ?, ?, ?)
+        """, (id_aluno, plano, valor, "Pendente"))
+
+        conexao.commit()
+        print("Mensalidade cadastrada com sucesso!")
+
+    except sqlite3.Error as e:
+        print(f"Erro ao cadastrar mensalidade: {e}")
+
+    finally:
+        conexao.close()
