@@ -36,5 +36,3 @@ def fazer_login():
 
         case _:
             print("Opção inválida")
-
-

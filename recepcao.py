@@ -328,5 +328,3 @@ def menu():
             break
         else:
             print("Opção inválida, tente novamente!")
-
-menu()

@@ -242,61 +242,7 @@ def vincular_treino_aluno():
         if conexao:
             conexao.close()
 
-def visualizar_ficha_aluno():
-    try:
-        conexao = sqlite3.connect('sistema_academia.db')
-        cursor = conexao.cursor()
-        
-        id_aluno = int(input("\nDigite o ID do aluno para ver a ficha detalhada: "))
-        
-        cursor.execute('''
-            SELECT a.nome_aluno, a.idade, a.status_acompanhamento, a.dia_aula, a.horario_aula, p.nome_personal 
-            FROM alunos a 
-            JOIN personal p ON a.id_personal = p.id 
-            WHERE a.id = ?''', (id_aluno,))
-        dados = cursor.fetchone()
-        
-        if not dados:
-            print("Aluno não encontrado.")
-            return
-            
-        print("\n=======================================================")
-        print(f"FICHA COMPLETA DO ALUNO(A): {dados[0]}")
-        print(f"Idade: {dados[1]} anos | {dados[2]}")
-        print(f"Personal Responsável: Prof. {dados[5]}")
-        print(f"Agendamento de Aula Fixa: {dados[3]} às {dados[4]}")
-        print("=======================================================")
-        
-        cursor.execute('''
-            SELECT td.dia_semana, e.nome 
-            FROM treinos_diarios td
-            JOIN exercicios e ON td.id_exercicio = e.id
-            WHERE td.id_aluno = ?
-            ORDER BY td.dia_semana''', (id_aluno,))
-        treinos = cursor.fetchall()
-        
-        if not treinos:
-            print("Nenhuma rotina de exercícios montada para este aluno.")
-        else:
-            agenda = {}
-            for dia, ex in treinos:
-                if dia not in agenda:
-                    agenda[dia] = []
-                agenda[dia].append(ex)
-                
-            for dia, lista_ex in agenda.items():
-                print(f"\n[Treino de {dia.upper()}]:")
-                for index, ex_nome in enumerate(lista_ex, 1):
-                    print(f"   {index}º exercício: {ex_nome}")
-        print("=======================================================")
-        
-    except ValueError:
-        print("Erro: O ID deve ser um número inteiro.")
-    except sqlite3.Error as e:
-        print(f"Erro ao buscar ficha do aluno: {e}")
-    finally:
-        if conexao:
-            conexao.close()
+
 
 def menu():
     try:
