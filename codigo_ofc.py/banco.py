@@ -18,15 +18,12 @@ def criar_tabela():
         cpf TEXT NOT NULL UNIQUE,
         mensalidade REAL NOT NULL,
         id_personal INTEGER NOT NULL,
-        dia_aula TEXT NOT NULL,
-        horario_aula TEXT NOT NULL,
-        status_acompanhamento TEXT NOT NULL,
-<<<<<<< HEAD
-        FOREIGN KEY (id_personal) REFERENCES personal(id) 
-=======
-        plano TEXT NOT NULL,
+        dia_aula TEXT,
+        horario_aula TEXT,
+        status_acompanhamento TEXT,
+        id_plano INTEGER NOT NULL,
         FOREIGN KEY (id_personal) REFERENCES personais(id) 
->>>>>>> 9ac47d45355ceb9b3597457c8ed8174765170b13
+        FOREIGN KEY (id_plano) REFERENCES mensalidades(id)
     )''')
 
 

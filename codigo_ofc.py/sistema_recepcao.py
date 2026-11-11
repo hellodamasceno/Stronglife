@@ -1,127 +1,5 @@
 import sqlite3
-from mensalidades import mensalidade, cadastrar_mensalidade
-
-def criar_tabela():
-    try:
-        conexao = sqlite3.connect('sistema_academia.db')
-        cursor = conexao.cursor()
-        cursor.execute("PRAGMA foreign_keys = ON;")
-
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS personais (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            cpf TEXT NOT NULL UNIQUE,
-            telefone TEXT NOT NULL
-        )
-        ''')
-
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS alunos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome_aluno TEXT NOT NULL,
-            idade INTEGER NOT NULL,
-            cpf TEXT NOT NULL UNIQUE,
-            mensalidade REAL NOT NULL,
-            id_personal INTEGER,
-            dia_aula TEXT,
-            horario_aula TEXT,
-            status_acompanhamento TEXT,
-            plano TEXT,
-            FOREIGN KEY (id_personal) REFERENCES personais(id)
-        )''')
-        
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS recepcionistas (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            cpf TEXT NOT NULL UNIQUE,
-            senha TEXT NOT NULL,
-            id_aluno INTEGER NOT NULL,
-            FOREIGN KEY (id_aluno) REFERENCES alunos(id)
-        ) ''')
-        
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS gerentes (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            senha TEXT NOT NULL,
-            cpf TEXT NOT NULL UNIQUE,
-            id_aluno INTEGER NOT NULL,
-            FOREIGN KEY (id_aluno) REFERENCES alunos(id)
-        ) ''')
-
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS presencas (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL,
-            tipo TEXT NOT NULL,
-            data TEXT NOT NULL,
-            id_aluno INTEGER NOT NULL,
-            id_personal INTEGER NOT NULL,
-            FOREIGN KEY (id_aluno) REFERENCES alunos(id),
-            FOREIGN KEY (id_personal) REFERENCES personais(id)
-        )''')
-        
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS treinos (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            aluno TEXT NOT NULL,
-            treino TEXT NOT NULL,
-            id_aluno INTEGER NOT NULL,
-            id_personal INTEGER NOT NULL,
-            FOREIGN KEY (id_aluno) REFERENCES alunos(id),
-            FOREIGN KEY (id_personal) REFERENCES personais(id)
-        ) ''')
-        
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS aulas_experimentais (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            aluno TEXT,
-            data TEXT,
-            horario TEXT,
-            status TEXT,
-            cpf TEXT NOT NULL,
-            id_aluno INTEGER,
-            id_personal INTEGER,
-            FOREIGN KEY (id_aluno) REFERENCES alunos(id),
-            FOREIGN KEY (id_personal) REFERENCES personais(id)
-        ) ''')
-
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS mensalidades (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_aluno INTEGER NOT NULL,
-            plano TEXT NOT NULL,
-            valor REAL NOT NULL,
-            status TEXT NOT NULL,
-            dias_atraso INTEGER DEFAULT 0,
-            FOREIGN KEY (id_aluno) REFERENCES alunos(id)
-        )
-        ''')
-        
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS exercicios (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            nome TEXT NOT NULL UNIQUE
-        )''')
-
-        cursor.execute('''
-        CREATE TABLE IF NOT EXISTS treinos_diarios (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_aluno INTEGER NOT NULL,
-            dia_semana TEXT NOT NULL,
-            id_exercicio INTEGER NOT NULL,
-            FOREIGN KEY (id_aluno) REFERENCES alunos(id),
-            FOREIGN KEY (id_exercicio) REFERENCES exercicios(id)
-        )''')
-        
-        conexao.commit()
-        print("Tabelas criadas com sucesso!")
-    except sqlite3.Error as e:
-        print(f"Erro ao inicializar o banco de dados: {e}")
-    finally:
-        conexao.close()
+from mensalidades import menu_planos, listar_planos
 
 
 def cadastrar_alunos():
@@ -134,33 +12,24 @@ def cadastrar_alunos():
         print("\n----CADASTRO DE ALUNO----")
 
         nome_aluno = input("Informe o nome do aluno para o cadastro: ")
-        cpf_aluno = input("Informe o cpf do aluno para o cadastro: ")
-        tel_aluno = input("Informe o telefone do aluno: ")
         idade_aluno = int(input("Informe a idade do aluno: "))
-        plano_aluno = input("Informe o plano que o aluno será vinculado: ")
-        resultado = mensalidades()
+        cpf_aluno = input("Informe o cpf do aluno para o cadastro: ")
 
-        if resultado is None:
-            return
-
-        plano_aluno, valor_aluno = resultado
-
-        comando_inserir = ('''
-INSERT INTO alunos (nome_aluno, cpf, idade, mensalidade, plano)
-VALUES (?, ?, ?, ?, ?)
+        listar_planos()
+        id_personal_aluno = input("Informe o id do plano que o aluno será vinculado: ")
+       
+      comando_inserir = ('''
+    INSERT INTO alunos
+    (nome_aluno, idade, cpf, mensalidade, id_plano)
+    VALUES (?, ?, ?, ?, ?)
 ''')
 
 cursor.execute(comando_inserir, (
     nome_aluno,
-    cpf_aluno,
     idade_aluno,
-    valor_aluno,
-    plano_aluno
+    cpf_aluno,
+    id_plano
 ))
-
-id_aluno = cursor.lastrowid
-
-cadastrar_mensalidade(id_aluno, plano_aluno, valor_aluno)
 
 conexao.commit()
         print(f"Aluno '{nome}' cadastrado com sucesso!")
@@ -194,7 +63,7 @@ def listar_aluno():
 
 
 def atualizar_cadastro():
-    listar_alunos()
+    listar_aluno()
 
     id_aluno = input("Digite o ID do aluno que deseja atualizar: ")
 
@@ -272,6 +141,7 @@ def deletar_aluno():
         cursor.execute("PRAGMA foreign_keys = ON;")
         
         print("\n---- DELETAR ALUNO ----")
+        listar_aluno()
         id_aluno = int(input("Digite o ID do aluno que deseja deletar: "))
 
         cursor.execute("SELECT nome_aluno FROM alunos WHERE id = ?", (id_aluno,))
@@ -313,48 +183,6 @@ def cadastrar_personal():
         conexao.close()
 
 
-    planos = {
-        1: ("Mensal", 1, 100.00),
-        2: ("Trimestral", 3, 90.00),
-        3: ("Semestral", 6, 80.00),
-        4: ("Anual", 12, 70.00)
-    }
-
-    print("\n====== PLANOS STRONGLIFE ======\n")
-
-    for codigo, plano in planos.items():
-
-        nome, duracao, valor = plano
-
-        print(codigo, "-", nome)
-        print("Duração:", duracao, "meses")
-        print("Valor mensal: R$", valor)
-        print("Valor total: R$", duracao * valor)
-        print()
-
-    try:
-        opcao = int(input("Escolha o plano: "))
-    except ValueError:
-        print("Digite uma opção válida!")
-        return
-
-    if opcao not in planos:
-        print("Opção inválida!")
-        return
-
-    nome_plano, duracao, valor_mensal = planos[opcao]
-
-    valor_total = duracao * valor_mensal
-
-
-
-
-
-
-
-
-
-
 
 def listar_personal():
     try:
@@ -378,7 +206,7 @@ def listar_personal():
 
 
 def atualizar_cadastrop():
-    listar_personais()
+    listar_personal()
 
     id_personal = input("Digite o ID do personal que deseja atualizar: ")
 
@@ -438,6 +266,7 @@ def deletar_personal():
         cursor.execute("PRAGMA foreign_keys = ON;")
         
         print("\n---- DELETAR PERSONAL ----")
+        listar_personal()
         id_personal = int(input("Digite o ID do personal que deseja deletar: "))
 
         cursor.execute("SELECT nome FROM personais WHERE id = ?", (id_personal,))
