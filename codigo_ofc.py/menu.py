@@ -1,6 +1,6 @@
 import sqlite3
 
-from treino import montar_treino, visualizar_ficha_aluno
+from personsl import montar_treino, visualizar_ficha_aluno
 
 conexao = sqlite3.connect('sistema_academia.db')
 cursor = conexao.cursor()
