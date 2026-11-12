@@ -127,7 +127,7 @@ CREATE TABLE IF NOT EXISTS mensalidades (
             dia_semana TEXT NOT NULL,
             id_exercicio INTEGER NOT NULL,
             FOREIGN KEY (id_aluno) REFERENCES alunos(id),
-            FOREIGN KEY (id_exercicio) REFERENCES exercicios(id) JA tem tabela
+            FOREIGN KEY (id_exercicio) REFERENCES exercicios(id)
         )''')
 
     conexao.commit()
