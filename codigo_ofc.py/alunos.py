@@ -1,4 +1,6 @@
 import sqlite3
+from personal import 
+
 
 conexao = sqlite3.connect("sistema_academia.db")
 cursor = conexao.cursor()

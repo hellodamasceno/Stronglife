@@ -81,8 +81,6 @@ def atualizar_plano():
 
 
 
-def excluir_plano():
-
    
 def excluir_plano():
 

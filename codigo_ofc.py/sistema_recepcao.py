@@ -1,5 +1,5 @@
 import sqlite3
-from mensalidades import menu_planos, listar_planos
+from mensalidades import listar_planos
 
 
 def cadastrar_alunos():
@@ -16,7 +16,7 @@ def cadastrar_alunos():
         cpf_aluno = input("Informe o cpf do aluno para o cadastro: ")
 
         listar_planos()
-        id_personal_aluno = input("Informe o id do plano que o aluno será vinculado: ")
+        id_plano = input("Informe o id do plano que o aluno será vinculado: ")
        
         comando_inserir = ('''
         INSERT INTO alunos
@@ -24,7 +24,7 @@ def cadastrar_alunos():
         VALUES (?, ?, ?, ?, ?)
         ''')
 
-        cursor.execute(comando_inserir, (nome_aluno, idade_aluno, cpf_aluno, id_personal_aluno))
+        cursor.execute(comando_inserir, (nome_aluno, idade_aluno, cpf_aluno, id_plano))
 
         conexao.commit()
         print(f"Aluno '{nome_aluno}' cadastrado com sucesso!")
