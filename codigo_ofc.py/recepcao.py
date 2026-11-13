@@ -2,58 +2,145 @@ import sqlite3
 from mensalidades import listar_planos
 
 
+
 def cadastrar_alunos():
 
+    conexao = None
+
     try:
         conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
-        cursor.execute("PRAGMA foreign_keys = ON;")
-            
-        print("\n----CADASTRO DE ALUNO----")
+        cursor.execute("PRAGMA foreign_keys = ON")
 
-        nome_aluno = input("Informe o nome do aluno para o cadastro: ")
-        idade_aluno = int(input("Informe a idade do aluno: "))
-        cpf_aluno = input("Informe o cpf do aluno para o cadastro: ")
+        print("\n---- CADASTRO DE ALUNO ----")
 
-        listar_planos()
-        id_plano = input("Informe o id do plano que o aluno será vinculado: ")
-       
-        comando_inserir = ('''
-        INSERT INTO alunos
-        (nome_aluno, idade, cpf, mensalidade, id_plano)
-        VALUES (?, ?, ?, ?, ?)
-        ''')
+        nome_aluno = input("Nome do aluno: ")
+        idade_aluno = int(input("Idade do aluno: "))
+        cpf_aluno = input("CPF do aluno: ")
 
-        cursor.execute(comando_inserir, (nome_aluno, idade_aluno, cpf_aluno, id_plano))
+        # Listar planos disponíveis
+        cursor.execute("SELECT id, nome, valor FROM planos")
+        planos = cursor.fetchall()
+
+        if not planos:
+            print("Nenhum plano cadastrado! Cadastre um plano primeiro.")
+            return
+
+        print("\n---- PLANOS DISPONÍVEIS ----")
+
+        for p in planos:
+            print(f"ID: {p[0]} | Plano: {p[1]} | Valor: R$ {p[2]:.2f}")
+
+        id_plano = int(input("Escolha o ID do plano: "))
+
+        cursor.execute(
+            "SELECT valor FROM planos WHERE id = ?",
+            (id_plano,)
+        )
+
+        plano = cursor.fetchone()
+
+        if plano is None:
+            print("Plano não encontrado!")
+            return
+
+        mensalidade = plano[0]
+
+        # Listar personais
+        cursor.execute("SELECT id, nome FROM personais")
+        personais = cursor.fetchall()
+
+        if not personais:
+            print("Nenhum personal cadastrado!")
+            return
+
+        print("\n---- PERSONAIS DISPONÍVEIS ----")
+
+        for p in personais:
+            print(f"ID: {p[0]} | Nome: {p[1]}")
+
+        id_personal = int(input("Escolha o ID do personal: "))
+
+        cursor.execute(
+            "SELECT id FROM personais WHERE id = ?",
+            (id_personal,)
+        )
+
+        if cursor.fetchone() is None:
+            print("Personal não encontrado!")
+            return
+
+        cursor.execute('''
+            INSERT INTO alunos
+            (nome_aluno, idade, cpf, mensalidade,
+             id_personal, id_plano)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (
+            nome_aluno,
+            idade_aluno,
+            cpf_aluno,
+            mensalidade,
+            id_personal,
+            id_plano
+        ))
 
         conexao.commit()
+
         print(f"Aluno '{nome_aluno}' cadastrado com sucesso!")
+
     except ValueError:
-        print("Erro: Idade e mensalidade devem ser apenas números!")
+        print("Erro: informe números válidos para idade e IDs!")
+
+    except sqlite3.IntegrityError as e:
+        print(f"Erro ao cadastrar aluno: {e}")
+
     except sqlite3.Error as e:
-        print(f"Erro no banco de dados ao cadastrar aluno: {e}")
+        print(f"Erro no banco de dados: {e}")
+
     finally:
-        conexao.close()
+        if conexao:
+            conexao.close()
+
 
 def listar_aluno():
+
+    conexao = None
+
     try:
         conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
-        
-        print("\n----LISTA DE ALUNOS----")
-        cursor.execute("SELECT * FROM alunos;")
-        alunos = cursor.fetchall() 
+
+        print("\n---- LISTA DE ALUNOS ----")
+
+        cursor.execute("""
+            SELECT id, nome_aluno, idade, cpf, mensalidade,
+                   id_personal, id_plano
+            FROM alunos
+        """)
+
+        alunos = cursor.fetchall()
 
         if not alunos:
             print("Nenhum aluno cadastrado no momento.")
             return
-            
+
         for a in alunos:
-            print(f"ID: {a[0]} | NOME: {a[1]} | Idade: {a[2]} | CPF: {a[3]} | Mensalidade: R${a[4]:.2f}")
+            print(
+                f"ID: {a[0]} | "
+                f"NOME: {a[1]} | "
+                f"IDADE: {a[2]} | "
+                f"CPF: {a[3]} | "
+                f"MENSALIDADE: R$ {a[4]:.2f} | "
+                f"PERSONAL: {a[5]} | "
+                f"PLANO: {a[6]}"
+            )
+
     except sqlite3.Error as e:
         print(f"Erro ao listar alunos: {e}")
+
     finally:
-        conexao.close()
+        if conexao:
+            conexao.close()
 
 
 
@@ -84,45 +171,45 @@ def atualizar_cadastro():
             print("5 - Plano")
             print("6 - Voltar")
 
-            opcao = input("Escolha o que deseja atualizar: ")
+            opcao = int(input("Escolha o que deseja atualizar: "))
 
             match opcao:
-                case "1":
+                case 1:
                     novo_valor = input("Digite o novo nome: ")
                     cursor.execute(
-                        "UPDATE alunos SET nome = ? WHERE id = ?",
+                        "UPDATE alunos SET nome_aluno = ? WHERE id = ?",
                         (novo_valor, id_aluno)
                     )
 
-                case "2":
+                case 2:
                     novo_valor = input("Digite o novo CPF: ")
                     cursor.execute(
                         "UPDATE alunos SET cpf = ? WHERE id = ?",
                         (novo_valor, id_aluno)
                     )
 
-                case "3":
+                case 3:
                     novo_valor = input("Digite o novo telefone: ")
                     cursor.execute(
                         "UPDATE alunos SET telefone = ? WHERE id = ?",
                         (novo_valor, id_aluno)
                     )
 
-                case "4":
+                case 4:
                     novo_valor = input("Digite a nova idade: ")
                     cursor.execute(
                         "UPDATE alunos SET idade = ? WHERE id = ?",
                         (novo_valor, id_aluno)
                     )
 
-                case "5":
+                case 5:
                     novo_valor = input("Digite o novo plano: ")
                     cursor.execute(
                         "UPDATE alunos SET plano = ? WHERE id = ?",
                         (novo_valor, id_aluno)
                     )
 
-                case "6":
+                case 6:
                     print("Voltando ao menu...")
                     break
 
@@ -130,11 +217,11 @@ def atualizar_cadastro():
                     print("Opção inválida!")
                     continue
 
-            if opcao in ["1", "2", "3", "4", "5"]:
+            if opcao in [1, 2, 3, 4, 5]:
                 conexao.commit()
                 print("Cadastro atualizado com sucesso!")
     except sqlite3.Error as e:
-        print("Error: no banco ao atualizar aluno!")
+        print(f"Error: no banco ao atualizar aluno! {e}")
     except ValueError:
         print("Error: id deve ser um numro inteiro!")
 
@@ -235,6 +322,7 @@ def atualizar_cadastrop():
             print("1 - Nome")
             print("2 - CPF")
             print("3 - Telefone")
+            print("4 - sair")
 
             opcao = input("Escolha o que deseja atualizar: ")
 

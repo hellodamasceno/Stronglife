@@ -48,7 +48,6 @@ def montar_treino(id_personal):
 
         conexao.commit()
 
-        # Escolha do aluno
         print("\n--- ALUNOS VINCULADOS AO PERSONAL ---")
 
         cursor.execute(
@@ -289,47 +288,3 @@ def visualizar_ficha_aluno(id_personal):
     finally:
         if conexao:
             conexao.close()
-
-import sqlite3
-
-conexao = sqlite3.connect('sistema_academia.db')
-cursor = conexao.cursor()
-
-
-
-def registrar_presenca_aluno():
-    
-    try:
-        id_aluno = int(input("Digite o id do aluno: "))
-        data_hora = input("Digite a data e a hora da presença: ")
-
-        cursor.execute('''
-            INSERT INTO presencas (id_aluno, data_hora)
-            VALUES (?, ?)
-        ''', (id_aluno, data_hora))
-
-        conexao.commit()
-        print("Presença registrada com sucesso!")
-
-    except ValueError:
-        print("Error: id deve ser numeros inteiros!")
-    except sqlite3.Error as e:
-        print(f"Error: no banco ao registrar presença {e}")
-
-def consultar_presencas():
-        
-    try:
-        cursor.execute('''
-            SELECT * FROM presencas
-        ''')
-
-        presencas = cursor.fetchall()
-
-        if len(presencas) == 0:
-            print("Nenhuma presença registrada.")
-        else:
-            for presenca in presencas:
-                print(presenca)
-    
-    except sqlite3.Error:
-        print(f"Error: No banco ao ver presença no banco! {e}")

@@ -1,5 +1,5 @@
 import sqlite3
-from personal import 
+from personal import visualizar_ficha_aluno
 
 
 conexao = sqlite3.connect("sistema_academia.db")
@@ -123,43 +123,73 @@ def cancelar_aula():
         print("Nenhuma aula experimental encontrada para este CPF.")
 
 
+import sqlite3
 
 
+def visualizar_minha_ficha():
+    conexao = sqlite3.connect("sistema_academia.db")
+    cursor = conexao.cursor()
 
+    print("\n--- MINHA FICHA ---")
 
+    id_aluno = int(input("Informe o seu ID: "))
 
+    cursor.execute(
+        """
+        SELECT
+            alunos.nome_aluno,
+            alunos.idade,
+            alunos.status_acompanhamento,
+            alunos.dia_aula,
+            alunos.horario_aula,
+            personais.nome,
+            alunos.plano
+        FROM alunos
+        LEFT JOIN personais ON alunos.id_personal = personais.id
+        WHERE alunos.id = ?
+        """,
+        (id_aluno,),
+    )
 
+    dados = cursor.fetchone()
 
+    match dados:
+        case None:
+            print("Ficha não encontrada!")
+            conexao.close()
+            return
 
+        case _:
+            print("\n----------------------------------------")
+            print("Nome:", dados[0])
+            print("Idade:", dados[1], "anos")
+            print("Status:", dados[2])
+            print("Personal:", dados[5])
+            print("Plano:", dados[6])
+            print("Dia da aula:", dados[3])
+            print("Horário:", dados[4])
+            print("----------------------------------------")
 
+    cursor.execute(
+        """
+        SELECT treinos_diarios.dia_semana, exercicios.nome
+        FROM treinos_diarios
+        JOIN exercicios ON treinos_diarios.id_exercicio = exercicios.id
+        WHERE treinos_diarios.id_aluno = ?
+        """,
+        (id_aluno,),
+    )
 
+    treinos = cursor.fetchall()
 
+    match treinos:
+        case []:
+            print("\nVocê ainda não tem treinos cadastrados.")
 
+        case _:
+            print("\n--- MEUS TREINOS ---")
+            for treino in treinos:
+                print(treino[0], "-", treino[1])
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-def menu_alunos():
-    while True:
-        print("\n====== ÁREA DO ALUNO ======")
-        print("1 - Agendar aula experimental")
-        print("2 - Atualizar aula experimental")
-        print("3 - Remarcar aula experimental")
-        print("4 - Visualizar meu treino")
-        print("5 - Sair")
-
-    opcao = input("Escolha uma opção: ")
-
-    match opcao:
-        case "1":
-
+    print("----------------------------------------")
+    conexao.close()
