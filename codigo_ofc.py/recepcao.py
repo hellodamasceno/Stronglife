@@ -1,12 +1,8 @@
 import sqlite3
-from mensalidades import listar_planos
-
 
 
 def cadastrar_alunos():
-
     conexao = None
-
     try:
         conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
@@ -16,9 +12,21 @@ def cadastrar_alunos():
 
         nome_aluno = input("Nome do aluno: ")
         idade_aluno = int(input("Idade do aluno: "))
+
+        # Regra para menores de 12 anos
+        if idade_aluno < 12:
+            print("\nAVISO: Alunos menores de 12 anos só podem treinar acompanhados de um personal ou dos pais!")
+
+        # Regra para menores de 18 anos
+        if idade_aluno < 18:
+            print("\nATENÇÃO: Aluno menor de 18 anos precisa de autorização dos pais ou responsáveis.")
+            autorizacao = input("Possui autorização assinada pelos pais? (S/N): ").strip().upper()
+            if autorizacao != "S":
+                print("Cadastro cancelado! Não é possível cadastrar menores sem autorização.")
+                return
+
         cpf_aluno = input("CPF do aluno: ")
 
-        # Listar planos disponíveis
         cursor.execute("SELECT id, nome, valor FROM planos")
         planos = cursor.fetchall()
 
@@ -27,17 +35,12 @@ def cadastrar_alunos():
             return
 
         print("\n---- PLANOS DISPONÍVEIS ----")
-
         for p in planos:
             print(f"ID: {p[0]} | Plano: {p[1]} | Valor: R$ {p[2]:.2f}")
 
         id_plano = int(input("Escolha o ID do plano: "))
 
-        cursor.execute(
-            "SELECT valor FROM planos WHERE id = ?",
-            (id_plano,)
-        )
-
+        cursor.execute("SELECT valor FROM planos WHERE id = ?", (id_plano,))
         plano = cursor.fetchone()
 
         if plano is None:
@@ -46,7 +49,6 @@ def cadastrar_alunos():
 
         mensalidade = plano[0]
 
-        # Listar personais
         cursor.execute("SELECT id, nome FROM personais")
         personais = cursor.fetchall()
 
@@ -55,25 +57,19 @@ def cadastrar_alunos():
             return
 
         print("\n---- PERSONAIS DISPONÍVEIS ----")
-
         for p in personais:
             print(f"ID: {p[0]} | Nome: {p[1]}")
 
         id_personal = int(input("Escolha o ID do personal: "))
 
-        cursor.execute(
-            "SELECT id FROM personais WHERE id = ?",
-            (id_personal,)
-        )
-
+        cursor.execute("SELECT id FROM personais WHERE id = ?", (id_personal,))
         if cursor.fetchone() is None:
             print("Personal não encontrado!")
             return
 
         cursor.execute('''
             INSERT INTO alunos
-            (nome_aluno, idade, cpf, mensalidade,
-             id_personal, id_plano)
+            (nome_aluno, idade, cpf, mensalidade, id_personal, id_plano)
             VALUES (?, ?, ?, ?, ?, ?)
         ''', (
             nome_aluno,
@@ -85,27 +81,21 @@ def cadastrar_alunos():
         ))
 
         conexao.commit()
-
         print(f"Aluno '{nome_aluno}' cadastrado com sucesso!")
 
     except ValueError:
         print("Erro: informe números válidos para idade e IDs!")
-
     except sqlite3.IntegrityError as e:
         print(f"Erro ao cadastrar aluno: {e}")
-
     except sqlite3.Error as e:
         print(f"Erro no banco de dados: {e}")
-
     finally:
         if conexao:
             conexao.close()
 
 
 def listar_aluno():
-
     conexao = None
-
     try:
         conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
@@ -137,15 +127,13 @@ def listar_aluno():
 
     except sqlite3.Error as e:
         print(f"Erro ao listar alunos: {e}")
-
     finally:
         if conexao:
             conexao.close()
 
 
-
 def atualizar_cadastro():
-    
+    conexao = None
     try:
         conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
@@ -153,7 +141,7 @@ def atualizar_cadastro():
 
         listar_aluno()
 
-        id_aluno = int(input("Digite o ID do aluno que deseja atualizar: "))
+        id_aluno = int(input("\nDigite o ID do aluno que deseja atualizar: "))
 
         cursor.execute("SELECT * FROM alunos WHERE id = ?", (id_aluno,))
         aluno = cursor.fetchone()
@@ -180,6 +168,8 @@ def atualizar_cadastro():
                         "UPDATE alunos SET nome_aluno = ? WHERE id = ?",
                         (novo_valor, id_aluno)
                     )
+                    conexao.commit()
+                    print("Nome atualizado com sucesso!")
 
                 case 2:
                     novo_valor = input("Digite o novo CPF: ")
@@ -187,6 +177,8 @@ def atualizar_cadastro():
                         "UPDATE alunos SET cpf = ? WHERE id = ?",
                         (novo_valor, id_aluno)
                     )
+                    conexao.commit()
+                    print("CPF atualizado com sucesso!")
 
                 case 3:
                     novo_valor = input("Digite o novo telefone: ")
@@ -194,20 +186,44 @@ def atualizar_cadastro():
                         "UPDATE alunos SET telefone = ? WHERE id = ?",
                         (novo_valor, id_aluno)
                     )
+                    conexao.commit()
+                    print("Telefone atualizado com sucesso!")
 
                 case 4:
-                    novo_valor = input("Digite a nova idade: ")
+                    nova_idade = int(input("Digite a nova idade: "))
+                    if nova_idade < 12:
+                        print("AVISO: Alunos menores de 12 anos só podem treinar acompanhados!")
+                    if nova_idade < 18:
+                        aut = input("Possui autorização dos pais? (S/N): ").strip().upper()
+                        if aut != "S":
+                            print("Atualização de idade cancelada por falta de autorização.")
+                            continue
                     cursor.execute(
                         "UPDATE alunos SET idade = ? WHERE id = ?",
-                        (novo_valor, id_aluno)
+                        (nova_idade, id_aluno)
                     )
+                    conexao.commit()
+                    print("Idade atualizada com sucesso!")
 
                 case 5:
-                    novo_valor = input("Digite o novo plano: ")
-                    cursor.execute(
-                        "UPDATE alunos SET plano = ? WHERE id = ?",
-                        (novo_valor, id_aluno)
-                    )
+                    cursor.execute("SELECT id, nome, valor FROM planos")
+                    planos = cursor.fetchall()
+                    for p in planos:
+                        print(f"ID: {p[0]} | Plano: {p[1]} | Valor: R$ {p[2]:.2f}")
+                    
+                    novo_plano = int(input("Digite o ID do novo plano: "))
+                    cursor.execute("SELECT valor FROM planos WHERE id = ?", (novo_plano,))
+                    plano_encontrado = cursor.fetchone()
+                    
+                    if plano_encontrado:
+                        cursor.execute(
+                            "UPDATE alunos SET id_plano = ?, mensalidade = ? WHERE id = ?",
+                            (novo_plano, plano_encontrado[0], id_aluno)
+                        )
+                        conexao.commit()
+                        print("Plano e mensalidade atualizados com sucesso!")
+                    else:
+                        print("Plano não encontrado!")
 
                 case 6:
                     print("Voltando ao menu...")
@@ -215,18 +231,18 @@ def atualizar_cadastro():
 
                 case _:
                     print("Opção inválida!")
-                    continue
 
-            if opcao in [1, 2, 3, 4, 5]:
-                conexao.commit()
-                print("Cadastro atualizado com sucesso!")
     except sqlite3.Error as e:
-        print(f"Error: no banco ao atualizar aluno! {e}")
+        print(f"Erro no banco ao atualizar aluno: {e}")
     except ValueError:
-        print("Error: id deve ser um numro inteiro!")
+        print("Erro: digite um número válido!")
+    finally:
+        if conexao:
+            conexao.close()
+
 
 def deletar_aluno():
-    
+    conexao = None
     try:
         conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
@@ -234,7 +250,7 @@ def deletar_aluno():
         
         print("\n---- DELETAR ALUNO ----")
         listar_aluno()
-        id_aluno = int(input("Digite o ID do aluno que deseja deletar: "))
+        id_aluno = int(input("\nDigite o ID do aluno que deseja deletar: "))
 
         cursor.execute("SELECT nome_aluno FROM alunos WHERE id = ?", (id_aluno,))
         aluno = cursor.fetchone()
@@ -248,22 +264,25 @@ def deletar_aluno():
             
     except ValueError:
         print("Erro: O ID deve ser um número inteiro!")
+    except sqlite3.IntegrityError:
+        print("Erro: Não é possível deletar este aluno pois ele possui treinos ou registros vinculados!")
     except sqlite3.Error as e:
         print(f"Erro ao deletar aluno: {e}")
     finally:
-        conexao.close()
+        if conexao:
+            conexao.close()
 
 
 def cadastrar_personal():
-    
+    conexao = None
     try:
         conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
         cursor.execute("PRAGMA foreign_keys = ON;")
         
-        print("\n----CADASTRO DE PERSONAL----")
+        print("\n---- CADASTRO DE PERSONAL ----")
         nome = input("Nome do personal: ")
-        cpf = input("CPF personal: ")
+        cpf = input("CPF do personal: ")
         telefone = input("Telefone do personal: ") 
 
         cursor.execute("INSERT INTO personais (nome, cpf, telefone) VALUES (?, ?, ?)", (nome, cpf, telefone))
@@ -273,12 +292,12 @@ def cadastrar_personal():
     except sqlite3.Error as e:
         print(f"Erro no banco de dados ao cadastrar personal: {e}")
     finally:
-        conexao.close()
-
+        if conexao:
+            conexao.close()
 
 
 def listar_personal():
-    
+    conexao = None
     try:
         conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
@@ -296,11 +315,12 @@ def listar_personal():
     except sqlite3.Error as e:
         print(f"Erro ao listar personais: {e}")
     finally:
-        conexao.close()
+        if conexao:
+            conexao.close()
 
 
 def atualizar_cadastrop():
-    
+    conexao = None
     try:
         conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
@@ -308,7 +328,7 @@ def atualizar_cadastrop():
         
         listar_personal()
 
-        id_personal = input("Digite o ID do personal que deseja atualizar: ")
+        id_personal = int(input("\nDigite o ID do personal que deseja atualizar: "))
 
         cursor.execute("SELECT * FROM personais WHERE id = ?", (id_personal,))
         personal = cursor.fetchone()
@@ -318,11 +338,11 @@ def atualizar_cadastrop():
             return
 
         while True:
-            print("\n>>> ATUALIZAR CADASTRO <<<")
+            print("\n>>> ATUALIZAR CADASTRO DE PERSONAL <<<")
             print("1 - Nome")
             print("2 - CPF")
             print("3 - Telefone")
-            print("4 - sair")
+            print("4 - Voltar")
 
             opcao = input("Escolha o que deseja atualizar: ")
 
@@ -333,6 +353,8 @@ def atualizar_cadastrop():
                         "UPDATE personais SET nome = ? WHERE id = ?",
                         (novo_valor, id_personal)
                     )
+                    conexao.commit()
+                    print("Nome atualizado com sucesso!")
 
                 case "2":
                     novo_valor = input("Digite o novo CPF: ")
@@ -340,6 +362,8 @@ def atualizar_cadastrop():
                         "UPDATE personais SET cpf = ? WHERE id = ?",
                         (novo_valor, id_personal)
                     )
+                    conexao.commit()
+                    print("CPF atualizado com sucesso!")
 
                 case "3":
                     novo_valor = input("Digite o novo telefone: ")
@@ -347,6 +371,8 @@ def atualizar_cadastrop():
                         "UPDATE personais SET telefone = ? WHERE id = ?",
                         (novo_valor, id_personal)
                     )
+                    conexao.commit()
+                    print("Telefone atualizado com sucesso!")
 
                 case "4":
                     print("Voltando ao menu...")
@@ -354,20 +380,18 @@ def atualizar_cadastrop():
 
                 case _:
                     print("Opção inválida!")
-                    continue
 
-            if opcao in ["1", "2", "3", "4"]:
-                conexao.commit()
-                print("Cadastro atualizado com sucesso!")
-    
     except sqlite3.Error as e:
-        print("Error: no banco ao atualizar aluno!")
+        print(f"Erro no banco ao atualizar personal: {e}")
     except ValueError:
-        print("Error: id deve ser um numro inteiro!")
+        print("Erro: ID deve ser um número inteiro!")
+    finally:
+        if conexao:
+            conexao.close()
 
 
 def deletar_personal():
-    
+    conexao = None
     try:
         conexao = sqlite3.connect('sistema_academia.db')
         cursor = conexao.cursor()
@@ -375,7 +399,7 @@ def deletar_personal():
         
         print("\n---- DELETAR PERSONAL ----")
         listar_personal()
-        id_personal = int(input("Digite o ID do personal que deseja deletar: "))
+        id_personal = int(input("\nDigite o ID do personal que deseja deletar: "))
 
         cursor.execute("SELECT nome FROM personais WHERE id = ?", (id_personal,))
         personal = cursor.fetchone()
@@ -394,5 +418,5 @@ def deletar_personal():
     except sqlite3.Error as e:
         print(f"Erro ao deletar personal: {e}")
     finally:
-        conexao.close()
-
+        if conexao:
+            conexao.close()

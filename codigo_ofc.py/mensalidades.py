@@ -3,6 +3,13 @@ conexao = sqlite3.connect('sistema_academia.db')
 cursor = conexao.cursor()
 
 def cadastrar_plano():
+    
+    print("\n---CADASTRAR UM PLANO---")
+
+    nome = input("Qual o nome do plano?(ex: black, familia.): ")
+    valor = float(input("qual o valor a cobrar desse plano?: "))
+    duracao = input("quanto tempo? (ex: mensal, anual.): ")
+
     cursor.execute("""
     INSERT INTO planos (nome, valor, duracao)
     VALUES (?, ?, ?)

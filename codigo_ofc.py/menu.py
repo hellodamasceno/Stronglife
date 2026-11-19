@@ -114,7 +114,7 @@ def menu_gerente():
             case "2":
                 listar_planos()
             case "3":
-                atualiza_planos()
+                atualizar_plano()
             case "4":
                 break
             case _:
