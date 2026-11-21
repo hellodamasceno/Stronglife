@@ -77,8 +77,6 @@ def cancelar_aula():
     print("\n>>> CANCELAR AULA EXPERIMENTAL <<<")
     cpf = input("Digite o CPF: ").strip()
 
-    with conectar() as conexao:
-        cursor = conexao.cursor()
 
         cursor.execute(
             'SELECT cpf, aluno, data, horario FROM aulas_experimentais WHERE cpf = ?',
