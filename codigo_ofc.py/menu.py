@@ -1,5 +1,6 @@
 import sqlite3
 
+from fazerlogin import fazer_login
 from alunos import agendar_aula, cancelar_aula, remarcar_aula, visualizar_minha_ficha
 from gerente import gerenciar_mensalidades
 from mensalidades import atualizar_plano, listar_planos, cadastrar_plano
@@ -101,54 +102,65 @@ def menu_recepcao():
 def menu_gerente():
     while True:
         print("\n--- ÁREA DO GERENTE ---")
-        print("1. Gerenciar mensalidades")
-        print("2. Listar planos")
-        print("3. Atualizar planos")
+        print("--- Gerenciar mensalidades ---")
+        print("1. Listar planos")
+        print("2. Atualizar planos")
+        print("3. Cadastrar planos")
         print("4. Voltar")
 
         opcao = input("Escolha uma opção: ")
 
         match opcao:
             case "1":
-                gerenciar_mensalidades()
-            case "2":
                 listar_planos()
-            case "3":
+            case "2":
                 atualizar_plano()
+            case "3":
+                cadastrar_plano()
             case "4":
                 break
             case _:
                 print("Opção inválida!")
 
 
+
+
+
+
 def menu():
-        while True:
-            print("\n=== ACADEMIA - SISTEMA DE CONTROLE ===")
-            print("1. Área do Aluno")
-            print("2. Área do Personal")
-            print("3. Área da Recepção")
-            print("4. Área do Gerente")
-            print("5. Sair")
+    while True:
+        print("\n=== ACADEMIA - SISTEMA DE CONTROLE ===")
+        print("1. Área do Aluno")
+        print("2. Área do Personal")
+        print("3. Área da Recepção")
+        print("4. Área do Gerente")
+        print("5. Sair")
 
-            opcao = input("Selecione uma opção: ")
+        opcao = input("Selecione uma opção: ")
 
-            match opcao:
-                case "1":
+        match opcao:
+
+            case "1":
+                if fazer_login("1"):
                     menu_aluno()
-                case "2":
+
+            case "2":
+                if fazer_login("2"):
                     menu_personal()
-                case "3":
-                    menu_recepcao()
-                case "4":
-                    menu_gerente()
-                case "5":
-                    print("Encerrando o sistema...")
-                    break
-                case _:
-                    print("Opção inválida! Tente novamente.")
+
+            case "3":
+                menu_recepcao()
+
+            case "4":
+                menu_gerente()
+
+            case "5":
+                print("Encerrando o sistema...")
+                break
+
+            case _:
+                print("Opção inválida!")
 
 
 criar_tabela()
 menu()
-cadastrar_plano
-cadastrar_personal

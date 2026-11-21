@@ -6,34 +6,28 @@ def criar_tabela():
         cursor = conexao.cursor()
         cursor.execute("PRAGMA foreign_keys = ON")
 
-        # =====================================
-        # TABELA PERSONAIS
-        # =====================================
-        cursor.execute("""
+      
+        cursor.execute('''
         CREATE TABLE IF NOT EXISTS personais (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             cpf TEXT NOT NULL UNIQUE,
             telefone TEXT NOT NULL
         )
-        """)
+        ''')
 
-        # =====================================
-        # TABELA PLANOS
-        # =====================================
-        cursor.execute("""
+
+        cursor.execute('''
         CREATE TABLE IF NOT EXISTS planos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             valor REAL NOT NULL,
             duracao INTEGER NOT NULL
         )
-        """)
+        ''')
 
-        # =====================================
-        # TABELA ALUNOS
-        # =====================================
-        cursor.execute("""
+       
+        cursor.execute('''
         CREATE TABLE IF NOT EXISTS alunos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome_aluno TEXT NOT NULL,
@@ -49,12 +43,9 @@ def criar_tabela():
             FOREIGN KEY (id_personal) REFERENCES personais(id),
             FOREIGN KEY (id_plano) REFERENCES planos(id)
         )
-        """)
+        ''')
 
-        # =====================================
-        # TABELA MENSALIDADES
-        # =====================================
-        cursor.execute("""
+        cursor.execute('''
         CREATE TABLE IF NOT EXISTS mensalidades (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             id_aluno INTEGER NOT NULL,
@@ -65,36 +56,27 @@ def criar_tabela():
 
             FOREIGN KEY (id_aluno) REFERENCES alunos(id)
         )
-        """)
+        ''')
 
-        # =====================================
-        # TABELA RECEPCIONISTAS
-        # =====================================
-        cursor.execute("""
+        cursor.execute('''
         CREATE TABLE IF NOT EXISTS recepcionistas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             cpf TEXT NOT NULL UNIQUE,
             senha TEXT NOT NULL
         )
-        """)
+        ''')
 
-        # =====================================
-        # TABELA GERENTES
-        # =====================================
-        cursor.execute("""
+        cursor.execute('''
         CREATE TABLE IF NOT EXISTS gerentes (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
             senha TEXT NOT NULL,
             cpf TEXT NOT NULL UNIQUE
         )
-        """)
+        ''')
 
-        # =====================================
-        # TABELA PRESENCAS
-        # =====================================
-        cursor.execute("""
+        cursor.execute('''
         CREATE TABLE IF NOT EXISTS presencas (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
@@ -106,12 +88,9 @@ def criar_tabela():
             FOREIGN KEY (id_aluno) REFERENCES alunos(id),
             FOREIGN KEY (id_personal) REFERENCES personais(id)
         )
-        """)
+        ''')
 
-        # =====================================
-        # TABELA TREINOS
-        # =====================================
-        cursor.execute("""
+        cursor.execute('''
         CREATE TABLE IF NOT EXISTS treinos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             aluno TEXT NOT NULL,
@@ -122,12 +101,9 @@ def criar_tabela():
             FOREIGN KEY (id_aluno) REFERENCES alunos(id),
             FOREIGN KEY (id_personal) REFERENCES personais(id)
         )
-        """)
+        ''')
 
-        # =====================================
-        # TABELA AULAS EXPERIMENTAIS
-        # =====================================
-        cursor.execute("""
+        cursor.execute('''
         CREATE TABLE IF NOT EXISTS aulas_experimentais (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             aluno TEXT,
@@ -141,22 +117,16 @@ def criar_tabela():
             FOREIGN KEY (id_aluno) REFERENCES alunos(id),
             FOREIGN KEY (id_personal) REFERENCES personais(id)
         )
-        """)
+        ''')
 
-        # =====================================
-        # TABELA EXERCICIOS
-        # =====================================
-        cursor.execute("""
+        cursor.execute('''
         CREATE TABLE IF NOT EXISTS exercicios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL UNIQUE
         )
-        """)
+        ''')
 
-        # =====================================
-        # TABELA TREINOS DIARIOS
-        # =====================================
-        cursor.execute("""
+        cursor.execute('''
         CREATE TABLE IF NOT EXISTS treinos_diarios (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             id_aluno INTEGER NOT NULL,
@@ -166,7 +136,7 @@ def criar_tabela():
             FOREIGN KEY (id_aluno) REFERENCES alunos(id),
             FOREIGN KEY (id_exercicio) REFERENCES exercicios(id)
         )
-        """)
+        ''')
 
         conexao.commit()
         print("Tabelas criadas com sucesso!")

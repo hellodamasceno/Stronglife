@@ -13,11 +13,9 @@ def cadastrar_alunos():
         nome_aluno = input("Nome do aluno: ")
         idade_aluno = int(input("Idade do aluno: "))
 
-        # Regra para menores de 12 anos
         if idade_aluno < 12:
             print("\nAVISO: Alunos menores de 12 anos só podem treinar acompanhados de um personal ou dos pais!")
 
-        # Regra para menores de 18 anos
         if idade_aluno < 18:
             print("\nATENÇÃO: Aluno menor de 18 anos precisa de autorização dos pais ou responsáveis.")
             autorizacao = input("Possui autorização assinada pelos pais? (S/N): ").strip().upper()
@@ -27,7 +25,7 @@ def cadastrar_alunos():
 
         cpf_aluno = input("CPF do aluno: ")
 
-        cursor.execute("SELECT id, nome, valor FROM planos")
+        cursor.execute('SELECT id, nome, valor FROM planos')
         planos = cursor.fetchall()
 
         if not planos:
@@ -40,7 +38,7 @@ def cadastrar_alunos():
 
         id_plano = int(input("Escolha o ID do plano: "))
 
-        cursor.execute("SELECT valor FROM planos WHERE id = ?", (id_plano,))
+        cursor.execute('SELECT valor FROM planos WHERE id = ?', (id_plano,))
         plano = cursor.fetchone()
 
         if plano is None:
@@ -49,7 +47,7 @@ def cadastrar_alunos():
 
         mensalidade = plano[0]
 
-        cursor.execute("SELECT id, nome FROM personais")
+        cursor.execute('SELECT id, nome FROM personais')
         personais = cursor.fetchall()
 
         if not personais:
@@ -62,7 +60,7 @@ def cadastrar_alunos():
 
         id_personal = int(input("Escolha o ID do personal: "))
 
-        cursor.execute("SELECT id FROM personais WHERE id = ?", (id_personal,))
+        cursor.execute('SELECT id FROM personais WHERE id = ?', (id_personal,))
         if cursor.fetchone() is None:
             print("Personal não encontrado!")
             return
@@ -102,11 +100,11 @@ def listar_aluno():
 
         print("\n---- LISTA DE ALUNOS ----")
 
-        cursor.execute("""
+        cursor.execute('''
             SELECT id, nome_aluno, idade, cpf, mensalidade,
                    id_personal, id_plano
             FROM alunos
-        """)
+        ''')
 
         alunos = cursor.fetchall()
 
@@ -143,7 +141,7 @@ def atualizar_cadastro():
 
         id_aluno = int(input("\nDigite o ID do aluno que deseja atualizar: "))
 
-        cursor.execute("SELECT * FROM alunos WHERE id = ?", (id_aluno,))
+        cursor.execute('SELECT * FROM alunos WHERE id = ?', (id_aluno,))
         aluno = cursor.fetchone()
 
         if not aluno:
@@ -154,10 +152,9 @@ def atualizar_cadastro():
             print("\n>>> ATUALIZAR CADASTRO <<<")
             print("1 - Nome")
             print("2 - CPF")
-            print("3 - Telefone")
-            print("4 - Idade")
-            print("5 - Plano")
-            print("6 - Voltar")
+            print("3 - Idade")
+            print("4 - Plano")
+            print("5 - Voltar")
 
             opcao = int(input("Escolha o que deseja atualizar: "))
 
@@ -165,7 +162,7 @@ def atualizar_cadastro():
                 case 1:
                     novo_valor = input("Digite o novo nome: ")
                     cursor.execute(
-                        "UPDATE alunos SET nome_aluno = ? WHERE id = ?",
+                        'UPDATE alunos SET nome_aluno = ? WHERE id = ?',
                         (novo_valor, id_aluno)
                     )
                     conexao.commit()
@@ -174,22 +171,13 @@ def atualizar_cadastro():
                 case 2:
                     novo_valor = input("Digite o novo CPF: ")
                     cursor.execute(
-                        "UPDATE alunos SET cpf = ? WHERE id = ?",
+                        'UPDATE alunos SET cpf = ? WHERE id = ?',
                         (novo_valor, id_aluno)
                     )
                     conexao.commit()
                     print("CPF atualizado com sucesso!")
 
                 case 3:
-                    novo_valor = input("Digite o novo telefone: ")
-                    cursor.execute(
-                        "UPDATE alunos SET telefone = ? WHERE id = ?",
-                        (novo_valor, id_aluno)
-                    )
-                    conexao.commit()
-                    print("Telefone atualizado com sucesso!")
-
-                case 4:
                     nova_idade = int(input("Digite a nova idade: "))
                     if nova_idade < 12:
                         print("AVISO: Alunos menores de 12 anos só podem treinar acompanhados!")
@@ -199,25 +187,25 @@ def atualizar_cadastro():
                             print("Atualização de idade cancelada por falta de autorização.")
                             continue
                     cursor.execute(
-                        "UPDATE alunos SET idade = ? WHERE id = ?",
+                        'UPDATE alunos SET idade = ? WHERE id = ?',
                         (nova_idade, id_aluno)
                     )
                     conexao.commit()
                     print("Idade atualizada com sucesso!")
 
-                case 5:
-                    cursor.execute("SELECT id, nome, valor FROM planos")
+                case 4:
+                    cursor.execute('SELECT id, nome, valor FROM planos')
                     planos = cursor.fetchall()
                     for p in planos:
                         print(f"ID: {p[0]} | Plano: {p[1]} | Valor: R$ {p[2]:.2f}")
                     
                     novo_plano = int(input("Digite o ID do novo plano: "))
-                    cursor.execute("SELECT valor FROM planos WHERE id = ?", (novo_plano,))
+                    cursor.execute('SELECT valor FROM planos WHERE id = ?', (novo_plano,))
                     plano_encontrado = cursor.fetchone()
                     
                     if plano_encontrado:
                         cursor.execute(
-                            "UPDATE alunos SET id_plano = ?, mensalidade = ? WHERE id = ?",
+                            'UPDATE alunos SET id_plano = ?, mensalidade = ? WHERE id = ?',
                             (novo_plano, plano_encontrado[0], id_aluno)
                         )
                         conexao.commit()
@@ -225,7 +213,7 @@ def atualizar_cadastro():
                     else:
                         print("Plano não encontrado!")
 
-                case 6:
+                case 5:
                     print("Voltando ao menu...")
                     break
 
@@ -252,11 +240,11 @@ def deletar_aluno():
         listar_aluno()
         id_aluno = int(input("\nDigite o ID do aluno que deseja deletar: "))
 
-        cursor.execute("SELECT nome_aluno FROM alunos WHERE id = ?", (id_aluno,))
+        cursor.execute('SELECT nome_aluno FROM alunos WHERE id = ?', (id_aluno,))
         aluno = cursor.fetchone()
         
         if aluno:
-            cursor.execute("DELETE FROM alunos WHERE id = ?", (id_aluno,))
+            cursor.execute('DELETE FROM alunos WHERE id = ?', (id_aluno,))
             conexao.commit()
             print(f"Aluno '{aluno[0]}' removido com sucesso!")
         else:
@@ -285,7 +273,7 @@ def cadastrar_personal():
         cpf = input("CPF do personal: ")
         telefone = input("Telefone do personal: ") 
 
-        cursor.execute("INSERT INTO personais (nome, cpf, telefone) VALUES (?, ?, ?)", (nome, cpf, telefone))
+        cursor.execute('INSERT INTO personais (nome, cpf, telefone) VALUES (?, ?, ?)', (nome, cpf, telefone))
         
         conexao.commit()
         print(f"Personal '{nome}' cadastrado com sucesso!")
@@ -303,7 +291,7 @@ def listar_personal():
         cursor = conexao.cursor()
         
         print("\n---- LISTA DE PERSONAIS ----")
-        cursor.execute("SELECT id, nome, cpf, telefone FROM personais;")
+        cursor.execute('SELECT id, nome, cpf, telefone FROM personais')
         personais = cursor.fetchall()
         
         if not personais:
@@ -330,7 +318,7 @@ def atualizar_cadastrop():
 
         id_personal = int(input("\nDigite o ID do personal que deseja atualizar: "))
 
-        cursor.execute("SELECT * FROM personais WHERE id = ?", (id_personal,))
+        cursor.execute('SELECT * FROM personais WHERE id = ?', (id_personal,))
         personal = cursor.fetchone()
 
         if not personal:
@@ -350,7 +338,7 @@ def atualizar_cadastrop():
                 case "1":
                     novo_valor = input("Digite o novo nome: ")
                     cursor.execute(
-                        "UPDATE personais SET nome = ? WHERE id = ?",
+                        'UPDATE personais SET nome = ? WHERE id = ?',
                         (novo_valor, id_personal)
                     )
                     conexao.commit()
@@ -359,7 +347,7 @@ def atualizar_cadastrop():
                 case "2":
                     novo_valor = input("Digite o novo CPF: ")
                     cursor.execute(
-                        "UPDATE personais SET cpf = ? WHERE id = ?",
+                        'UPDATE personais SET cpf = ? WHERE id = ?',
                         (novo_valor, id_personal)
                     )
                     conexao.commit()
@@ -368,7 +356,7 @@ def atualizar_cadastrop():
                 case "3":
                     novo_valor = input("Digite o novo telefone: ")
                     cursor.execute(
-                        "UPDATE personais SET telefone = ? WHERE id = ?",
+                        'UPDATE personais SET telefone = ? WHERE id = ?',
                         (novo_valor, id_personal)
                     )
                     conexao.commit()
@@ -401,11 +389,11 @@ def deletar_personal():
         listar_personal()
         id_personal = int(input("\nDigite o ID do personal que deseja deletar: "))
 
-        cursor.execute("SELECT nome FROM personais WHERE id = ?", (id_personal,))
+        cursor.execute('SELECT nome FROM personais WHERE id = ?', (id_personal,))
         personal = cursor.fetchone()
         
         if personal:
-            cursor.execute("DELETE FROM personais WHERE id = ?", (id_personal,))
+            cursor.execute('DELETE FROM personais WHERE id = ?', (id_personal,))
             conexao.commit()
             print(f"Personal '{personal[0]}' removido com sucesso!")
         else:

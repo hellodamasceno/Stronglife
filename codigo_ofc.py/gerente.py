@@ -5,3 +5,5 @@ cursor = conexao.cursor()
 
 def gerenciar_mensalidades():
     cadastrar_plano()
+    listar_planos()
+    atualizar_plano()

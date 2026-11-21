@@ -1,40 +1,39 @@
 import sqlite3
 
-
-def conectar():
-    return sqlite3.connect("sistema_academia.db")
+conexao = sqlite3.connect('sistema_academia.db')
+cursor = conexao.cursor()
 
 
 def agendar_aula():
+
     print("\n>>> AGENDAR AULA EXPERIMENTAL <<<")
+
     cpf = input("Digite o CPF: ").strip()
 
-    with conectar() as conexao:
-        cursor = conexao.cursor()
+    cursor.execute('SELECT id FROM alunos WHERE cpf = ?', (cpf,))
 
-        cursor.execute("SELECT id FROM alunos WHERE cpf = ?", (cpf,))
-        if cursor.fetchone():
-            print("Esta pessoa já está cadastrada como aluno!")
-            return
+    if cursor.fetchone():
+        print('Esta pessoa já está cadastrada como aluno!')
+        return
 
-        cursor.execute("SELECT id FROM aulas_experimentais WHERE cpf = ?", (cpf,))
-        if cursor.fetchone():
-            print("Esta pessoa já possui uma aula experimental agendada!")
-            return
+    cursor.execute('SELECT id FROM aulas_experimentais WHERE cpf = ?', (cpf,))
 
-        nome = input("Digite o nome: ").strip()
-        data = input("Digite a data da aula (DD/MM/AAAA): ").strip()
-        horario = input("Digite o horário da aula (HH:MM): ").strip()
+    if cursor.fetchone():
+        print("Esta pessoa já possui uma aula experimental agendada!")
+        return
 
-        cursor.execute(
-            """
-            INSERT INTO aulas_experimentais (cpf, aluno, data, horario, status)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (cpf, nome, data, horario, "Agendada"),
-        )
-        conexao.commit()
-        print("Aula experimental agendada com sucesso!")
+    nome = input("Digite o nome: ").strip()
+    data = input("Digite a data da aula (DD/MM/AAAA): ").strip()
+    horario = input("Digite o horário da aula (HH:MM): ").strip()
+
+    cursor.execute('''
+        INSERT INTO aulas_experimentais (cpf, aluno, data, horario, status)
+        VALUES (?, ?, ?, ?, ?)
+    ''', (cpf, nome, data, horario, "Agendada"))
+
+    conexao.commit()
+
+    print("Aula experimental agendada com sucesso!")
 
 
 def remarcar_aula():
@@ -45,7 +44,7 @@ def remarcar_aula():
         cursor = conexao.cursor()
 
         cursor.execute(
-            "SELECT cpf, aluno, data, horario FROM aulas_experimentais WHERE cpf = ?",
+            'SELECT cpf, aluno, data, horario FROM aulas_experimentais WHERE cpf = ?',
             (cpf,),
         )
         aula = cursor.fetchone()
@@ -63,11 +62,11 @@ def remarcar_aula():
         novo_horario = input("Digite o novo horário (HH:MM): ").strip()
 
         cursor.execute(
-            """
+            '''
             UPDATE aulas_experimentais
             SET data = ?, horario = ?, status = 'Remarcada'
             WHERE cpf = ?
-            """,
+            ''',
             (nova_data, novo_horario, cpf),
         )
         conexao.commit()
@@ -82,7 +81,7 @@ def cancelar_aula():
         cursor = conexao.cursor()
 
         cursor.execute(
-            "SELECT cpf, aluno, data, horario FROM aulas_experimentais WHERE cpf = ?",
+            'SELECT cpf, aluno, data, horario FROM aulas_experimentais WHERE cpf = ?',
             (cpf,),
         )
         aula = cursor.fetchone()
@@ -99,7 +98,7 @@ def cancelar_aula():
         confirmar = input("\nDeseja realmente cancelar? (S/N): ").strip().upper()
 
         if confirmar == "S":
-            cursor.execute("DELETE FROM aulas_experimentais WHERE cpf = ?", (cpf,))
+            cursor.execute('DELETE FROM aulas_experimentais WHERE cpf = ?', (cpf,))
             conexao.commit()
             print("Aula cancelada com sucesso!")
         else:
@@ -107,59 +106,48 @@ def cancelar_aula():
 
 
 def visualizar_minha_ficha():
-    print("\n---- MINHA FICHA ----")
+    print('\n---- MINHA FICHA ----')
+
     try:
         id_aluno = int(input("Informe o seu ID: "))
     except ValueError:
         print("ID inválido! Digite apenas números.")
         return
 
-    with conectar() as conexao:
-        cursor = conexao.cursor()
+    cursor.execute('''
+        SELECT alunos.id, alunos.nome_aluno, alunos.idade,
+            alunos.status_acompanhamento, alunos.dia_aula,
+            alunos.horario_aula, personais.nome, planos.nome
+        FROM alunos
+        LEFT JOIN personais ON alunos.id_personal = personais.id
+        LEFT JOIN planos ON alunos.id_plano = planos.id
+        WHERE alunos.id = ?
+    ''', (id_aluno,))
 
-        cursor.execute(
-            """
-            SELECT
-                alunos.id,
-                alunos.nome_aluno,
-                alunos.idade,
-                alunos.status_acompanhamento,
-                alunos.dia_aula,
-                alunos.horario_aula,
-                personais.nome,
-                planos.nome
-            FROM alunos
-            LEFT JOIN personais ON alunos.id_personal = personais.id
-            LEFT JOIN planos ON alunos.id_plano = planos.id
-            WHERE alunos.id = ?
-            """,
-            (id_aluno,),
-        )
-        dados = cursor.fetchone()
+    dados = cursor.fetchone()
+    if not dados:
+        print("Ficha não encontrada!")
+        return
 
-        if not dados:
-            print("Ficha não encontrada!")
-            return
-
-        personal = dados if dados else "Não atribuído"
-        plano = dados if dados else "Sem plano"
-        status = dados if dados else "Sem status"
-        dia = dados if dados else "Não definido"
-        horario = dados if dados else "Não definido"
+        personal = dados[6] if dados[6] else "Não atribuído"
+        plano = dados[7] if dados[7] else "Sem plano"
+        status = dados[3] if dados[3] else "Sem status"
+        dia = dados[4] if dados[4] else "Não definido"
+        horario = dados[5] if dados[5] else "Não definido"
 
         print(
-            f"\nID: {dados} | NOME: {dados} | IDADE: {dados} | "
+            f"\nID: {dados[0]} | NOME: {dados[1]} | IDADE: {dados[2]} | "
             f"STATUS: {status} | PERSONAL: {personal} | PLANO: {plano} | "
             f"AULA: {dia} às {horario}"
         )
 
         cursor.execute(
-            """
+            '''
             SELECT treinos_diarios.dia_semana, exercicios.nome
             FROM treinos_diarios
             JOIN exercicios ON treinos_diarios.id_exercicio = exercicios.id
             WHERE treinos_diarios.id_aluno = ?
-            """,
+            ''',
             (id_aluno,),
         )
         treinos = cursor.fetchall()
@@ -169,4 +157,4 @@ def visualizar_minha_ficha():
             print("Você ainda não tem treinos cadastrados.")
         else:
             for treino in treinos:
-                print(f"DIA: {treino} | EXERCÍCIO: {treino}")
+                print(f"DIA: {treino[0]} | EXERCÍCIO: {treino[1]}")

@@ -1,38 +1,28 @@
-def fazer_login():
 
-    print("FAZER LOGIN - STRONG LIFE")
-    print("1 - LOGIN ALUNO | 2 - LOGIN PERSONAL | 3 - LOGIN RECEPCIONISTA")
+def fazer_login(tipo):
 
-    opcao = int(input("Digite a opção: "))
+    match tipo:
 
-    match opcao:
-
-        case 1:
-            print("LOGIN ALUNO")
-            usuario_aluno = input("Digite o seu CPF: ")
+        case "1":
+            print("\n--- LOGIN ALUNO ---")
+            usuario = input("Digite seu CPF: ")
             senha = input("Digite sua senha: ")
 
-            print(f"Login no CPF {usuario_aluno} realizado")
+            if usuario == "12345678900" and senha == "123":
+                print("Login realizado com sucesso!")
+                return True
+            else:
+                print("CPF ou senha incorretos!")
+                return False
 
-        case 2:
-            print("LOGIN PERSONAL")
-            usuario = input("Digite o seu CPF: ")
+        case "2":
+            print("\n--- LOGIN PERSONAL ---")
+            usuario = input("Digite seu CPF: ")
             senha = input("Digite sua senha: ")
 
-            print(f"Login no CPF {usuario} realizado")
-
-        case 3:
-            print("LOGIN RECEPCIONISTA")
-            recepcionista = input("Digite o nome da recepcionista: ")
-            recepcionista_senha = input("Digite sua senha: ")
-
-            print(f"Login da recepcionista {recepcionista} realizado")
-
-            print("REGISTRAR PRESENÇA ALUNO")
-            nome_aluno = input("Digite o nome do aluno: ")
-            data = input("Digite a data da presença: ")
-
-            print(f"Presença do {nome_aluno} na data {data} registrada")
-
-        case _:
-            print("Opção inválida")
+            if usuario == "98765432100" and senha == "123":
+                print("Login realizado com sucesso!")
+                return True
+            else:
+                print("CPF ou senha incorretos!")
+                return False
