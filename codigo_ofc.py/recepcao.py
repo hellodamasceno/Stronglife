@@ -183,16 +183,15 @@ def atualizar_cadastro():
                         print("AVISO: Alunos menores de 12 anos só podem treinar acompanhados!")
                     if nova_idade < 18:
                         aut = input("Possui autorização dos pais? (S/N): ").strip().upper()
-                        if aut != "S":
+                        if aut == "S":
+                            cursor.execute(
+                                'UPDATE alunos SET idade = ? WHERE id = ?',
+                                (nova_idade, id_aluno)
+                            )
+                            conexao.commit()
+                            print("Idade atualizada com sucesso!")
+                        else:
                             print("Atualização de idade cancelada por falta de autorização.")
-                            continue
-                    cursor.execute(
-                        'UPDATE alunos SET idade = ? WHERE id = ?',
-                        (nova_idade, id_aluno)
-                    )
-                    conexao.commit()
-                    print("Idade atualizada com sucesso!")
-
                 case 4:
                     cursor.execute('SELECT id, nome, valor FROM planos')
                     planos = cursor.fetchall()

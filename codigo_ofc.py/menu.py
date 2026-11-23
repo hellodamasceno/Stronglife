@@ -123,10 +123,6 @@ def menu_gerente():
                 print("Opção inválida!")
 
 
-
-
-
-
 def menu():
     while True:
         print("\n=== ACADEMIA - SISTEMA DE CONTROLE ===")
